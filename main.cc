@@ -46,7 +46,8 @@ void ncurses_off(){
 
 void game_start(){
 	vector<vector<vector<Game_map>>> board;
-
+	int ladder_down_x = 0;
+	int ladder_down_y = 0;
 	const int FLOOR_COUNT = 4;
 	const int BOARD_SIZE = 10;
 	board.resize(FLOOR_COUNT);
@@ -64,7 +65,29 @@ void game_start(){
 		board.at(k)=temp;
 	}
 	for (int i = 0; i < FLOOR_COUNT; i++){
-		board.at(i).at(rand()%BOARD_SIZE -1).at(rand()%BOARD_SIZE -1).spawn_boss();
+		//temp variables to see if boss is in location
+		int temph = (rand()%(Game_map::SIZEH -1))+1;
+		int temp = (rand()%(Game_map::SIZE -1))+1;
+		//spawns boss at a random location on the floor
+		board.at(i).at(rand()%(BOARD_SIZE -1)).at(rand()%(BOARD_SIZE -1)).spawn_boss();
+		
+		//ladder up
+		if (i!=0){
+			board.at(i).at(rand()%(BOARD_SIZE -1)).at(rand()%(BOARD_SIZE -1)).spawn_ladder_up(ladder_down_x,ladder_down_y);
+			
+		}
+		//spawns a ladder down at a random spot on the floor (handles colision with boss)
+		if (i!=FLOOR_COUNT-1){
+			if (board.at(i).at(rand()%(BOARD_SIZE-1)).at(rand()%(BOARD_SIZE-1)).get_current_loc(temph,temp)==Game_map::BOSS){
+
+			}
+			else{
+				board.at(i).at(rand()%(BOARD_SIZE -1)).at(rand()%(BOARD_SIZE -1)).spawn_ladder_down(temph,temp);
+				ladder_down_x = temph;
+				ladder_down_y = temp;
+			}
+		}
+
 	}
 	string test;
 	hrc::time_point old_time = hrc::now();
@@ -139,6 +162,12 @@ void game_start(){
 			
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::BOSS)
 				;
+			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_DOWN){
+				level++;
+			}
+			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_UP){
+				level--;
+			}
 			
 			hero.set_loc(x,y);
 
@@ -155,6 +184,12 @@ void game_start(){
 					ncurses_off();
 					ncurses_on();
 			}
+			}
+			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_DOWN){
+				level++;
+			}
+			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_UP){
+				level--;
 			}
 			
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){
@@ -203,6 +238,12 @@ void game_start(){
 					ncurses_on();
 				}
 			}
+			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_DOWN){
+				level++;
+			}
+			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_UP){
+				level--;
+			}
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){
 				if (x==0){
 					board_x--;
@@ -248,6 +289,12 @@ void game_start(){
 					ncurses_off();
 					ncurses_on();
 				}
+			}
+			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_DOWN){
+				level++;
+			}
+			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_UP){
+				level--;
 			}
 			
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){

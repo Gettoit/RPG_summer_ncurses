@@ -32,8 +32,14 @@ class Game_map{
 	static const char HEALTH_UP = '+';
 	static const char TERRAIN = '@';
 	static const char BOSS = 'B';
-	static const size_t SIZE = 45;
-	static const size_t SIZEH = 100;
+	static const char LADDER_UP = '^';
+	static const char LADDER_DOWN = 'v';
+	//static const size_t SIZE = 45;
+	//static const size_t SIZEH = 100;
+	
+	//TEST
+	static const size_t SIZE = 20;
+	static const size_t SIZEH = 20;
 
 	static const size_t DISPLAY = 19;
 	
@@ -324,6 +330,12 @@ class Game_map{
 		}
 		return;
 
+	}
+	void spawn_ladder_down(int x, int y){
+		map.at(y).at(x)=LADDER_DOWN;
+	}
+	void spawn_ladder_up(int x, int y){
+		map.at(y).at(x)=LADDER_UP;
 	}
 	void spawn_boss(){
 		map.at(SIZE/2).at(SIZEH/2)=BOSS;
