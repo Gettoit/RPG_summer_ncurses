@@ -5,8 +5,9 @@
 using namespace std;
 struct Move{
 	string name;
-	int damage, mana_cost;
+	int damage, mana_cost, healing;
 	float damage_multiplier;
+	int level_req;	
 
 };
 
