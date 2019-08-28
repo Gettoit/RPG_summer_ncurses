@@ -46,8 +46,10 @@ void ncurses_off(){
 
 void game_start(){
 	vector<vector<vector<Game_map>>> board;
-	board.resize(4);
+
+	const int FLOOR_COUNT = 4;
 	const int BOARD_SIZE = 10;
+	board.resize(FLOOR_COUNT);
 	for (int k = 0; k< 4; k++){
 		vector<vector<Game_map>> temp;
 		
@@ -60,6 +62,9 @@ void game_start(){
 			temp.push_back(temp2);
 		}
 		board.at(k)=temp;
+	}
+	for (int i = 0; i < FLOOR_COUNT; i++){
+		board.at(i).at(rand()%BOARD_SIZE -1).at(rand()%BOARD_SIZE -1).spawn_boss();
 	}
 	string test;
 	hrc::time_point old_time = hrc::now();

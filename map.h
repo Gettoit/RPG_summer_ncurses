@@ -18,7 +18,8 @@ class Game_map{
 	vector<vector<bool>> is_exit;
 	vector <Enemy> enemies;
 	
-	bool exit=false;
+	//No longer use exit to leave the floor
+	//bool exit=false;
 	public:
 	static const char EXIT = 'E';
 	static const char HERO = 'H';
@@ -63,12 +64,25 @@ class Game_map{
 				else if ((i ==0 and j==0) or (i==0 and j==SIZEH-1) or j == 0 or j == SIZEH -1 or i == 0 or i == SIZE -1)
 					map.at(i).at(j) =WALL;
 				
+
+				// CHANGED HOW BOSS WORKS NO LONGER IN EVERY ROOM
+				//TODO: make the boss spawn only in 1 room
+				/*
 				else if ( i==SIZE/2 and j==SIZEH/2)
 					map.at(i).at(j)=BOSS;
+					*/
+
+
+
+				//CHANGED HOW THE EXIT WORKS
+				//TODO: Make one ladder down and one up (no up on first floor and no down on last floor
+				/*
 				else if (exit == false  && (d100(gen)==1 or (i==28 and j==28))){
 					exit=true;
 					map.at(i).at(j)=EXIT;
 				}
+				*/
+
 				else {
 					//2% chance of health gain
 					//TODO: change this maybe remove random health ups on the map or limit them to a shop???
@@ -310,6 +324,9 @@ class Game_map{
 		}
 		return;
 
+	}
+	void spawn_boss(){
+		map.at(SIZE/2).at(SIZEH/2)=BOSS;
 	}
 	//easier to call init_map no other purpose but to save typing 
 	Game_map() {
