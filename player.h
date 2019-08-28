@@ -3,23 +3,18 @@
 #include <utility>
 #include "inventory.h"
 using namespace std;
-class Move{
+struct Move{
 	string name;
-	int damage, mana;
-	float scaling;
-	public:
-	Move (string new_name, int new_damage, int new_mana, float new_scale){
-		name= new_name;
-		damage= new_damage;
-		mana= new_mana;
-		scaling=new_scale;
-	}
+	int damage, mana_cost;
+	float damage_multiplier;
+
 };
 
 //class for the player character gets stronger over time
 class Hero{
 	string name;
 	int health, mana,attack,speed,experience,level;
+	int max_health;
 	vector<Move> move_pool;
 	pair <int,int> location;
 	Inventory loot;
@@ -27,10 +22,14 @@ class Hero{
 	Hero(string new_name, int new_health, int new_mana, int new_attack, int new_speed){
 		name = new_name;
 		health=new_health;
+		max_health=new_health;
 		mana=new_mana;
 		attack=new_attack;
 		speed = new_speed;
 		level=1;
+	}
+	int get_max_health(){
+		return max_health;
 	}
 	void set_loc(int x, int y){
 		location.first = x;
@@ -39,6 +38,9 @@ class Hero{
 	pair<int,int> get_loc(){
 		return location;
 	}
+	void take_damage(int damage){
+		health-= damage;
+	}	
 	void set_health(int hp){
 		health=hp;
 	}
@@ -69,6 +71,9 @@ class Hero{
 	int get_experience(){
 		return experience;
 	}
+	int get_level(){
+		return level;
+	}
 	void level_up(){
 		if ((experience%level) > 20){
 			experience = experience%20;
@@ -85,6 +90,7 @@ class Hero{
 	void set_moves(vector<Move>hi){
 		move_pool=hi;
 	}
+
 	Move get_move_one(){
 		return move_pool.at(0);
 	}
@@ -101,12 +107,13 @@ class Hero{
 };
 
 class Enemy{
-	int health, attack,speed;
+	int health, attack,speed, level;
 	public:
-	Enemy (int hp, int atk, int spd){
-		health=hp;
-		attack=atk;
-		speed=spd;
+	Enemy (int new_level){
+		level = new_level;
+		health= new_level * 30;
+		attack = new_level *10;
+		speed = new_level*5;
 	}
 			
 	void set_health(int hp){

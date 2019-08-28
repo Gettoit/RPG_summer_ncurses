@@ -81,7 +81,7 @@ void game_start(){
 	for (size_t i = 0; i < test.size(); i ++){
 		name[i] = test.at(i);
 	}
-	Hero hero(test,10,10,10,10);
+	Hero hero(test,100,10,10,10);
 	int x = 1, y = 1;
 	int level = 0, board_x=0,board_y=0;
 	hero.set_loc(x,y);
@@ -97,9 +97,11 @@ void game_start(){
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::WALL) x--;
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::WATER) x--;
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::GRASS){
-			//	if (board.check_grass(x,y) == true)
-				//do combat in map.h
-//					combat(hero);
+				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					board.at(level).at(board_y).at(board_x).combat(hero);
+					ncurses_off();
+					ncurses_on();
+			}
 			}
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){
 				if (x==0){
@@ -142,6 +144,11 @@ void game_start(){
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::GRASS){
 			//	if (board.check_grass(x,y) == true)
 				//do combat in map.h
+				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					board.at(level).at(board_y).at(board_x).combat(hero);
+					ncurses_off();
+					ncurses_on();
+			}
 			}
 			
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){
@@ -184,6 +191,11 @@ void game_start(){
 			//	if (board.check_grass(x,y) == true)
 				//do combat in map.h
 //					combat(hero);
+				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					board.at(level).at(board_y).at(board_x).combat(hero);
+					ncurses_off();
+					ncurses_on();
+				}
 			}
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){
 				if (x==0){
@@ -225,6 +237,11 @@ void game_start(){
 			//	if (board.check_grass(x,y) == true)
 				//do combat in map.h
 //					combat(hero);
+				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					board.at(level).at(board_y).at(board_x).combat(hero);
+					ncurses_off();
+					ncurses_on();
+				}
 			}
 			
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){
@@ -259,8 +276,16 @@ void game_start(){
 			hero.set_loc(x,y);
 
 		}
-		mvprintw(Game_map::DISPLAY +1,0,"Character name: ");
-		mvprintw(Game_map::DISPLAY +1,16,name);
+		
+		mvprintw(Game_map::SIZE,0,"Character name: ");
+		mvprintw(Game_map::SIZE,16,name);
+		mvprintw(Game_map::SIZE +1, 0, "Player level: ");
+		mvprintw(Game_map::SIZE +1, 14,"%d",hero.get_level());
+		mvprintw(Game_map::SIZE +2,0, "Current Health: ");
+		mvprintw(Game_map::SIZE +2,16, "%d", hero.get_health());
+		mvprintw(Game_map::SIZE +2,20, "/ ");
+		mvprintw(Game_map::SIZE +2,22, "%d",hero.get_max_health());
+
 		board.at(level).at(board_y).at(board_x).set_player_loc(x,y,c);
 		board.at(level).at(board_y).at(board_x).draw(x,y);
 	}

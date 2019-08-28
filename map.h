@@ -14,6 +14,7 @@ class Game_map{
 	vector <string> map;
 	vector <pair<int,int>> monster_loc;
 	vector<vector<bool>> is_grass;
+	vector<vector<bool>> is_monster;
 	vector<vector<bool>> is_exit;
 	vector <Enemy> enemies;
 	
@@ -30,8 +31,8 @@ class Game_map{
 	static const char HEALTH_UP = '+';
 	static const char TERRAIN = '@';
 	static const char BOSS = 'B';
-	static const size_t SIZE = 50;
-	static const size_t SIZEH = 150;
+	static const size_t SIZE = 45;
+	static const size_t SIZEH = 100;
 
 	static const size_t DISPLAY = 19;
 	
@@ -45,9 +46,11 @@ class Game_map{
 		map.resize(SIZE); 
 		is_grass.resize(SIZE);
 		is_exit.resize(SIZE);
+		is_monster.resize(SIZE);
 		for (auto &v : map) v.resize(SIZEH,' '); 
 		for (auto &v : is_grass) v.resize(SIZEH,false);
 		for (auto &v : is_exit) v.resize(SIZEH,false);
+		for (auto &v : is_monster) v.resize(SIZEH,false);
 		for (size_t i = 0; i < SIZE; i++) {
 			for (size_t j = 0; j < SIZEH; j++) {
 				//Line the map with walls
@@ -69,21 +72,22 @@ class Game_map{
 				else {
 					//2% chance of health gain
 					//TODO: change this maybe remove random health ups on the map or limit them to a shop???
+					/*
 					if (d100(gen) <=2){
 						map.at(i).at(j) = HEALTH_UP;
 					}
+					*/
 					//5% change to spawn a monster
 					//TODO: maybe make the monsters hidden and only show up in grass need to determine that when game is closer to being playable
 					//TODO: monsters from visible map and add them to be only spawned in grass may need to move this entirely
-
-					else if (d100(gen) <= 5) {
-						map.at(i).at(j) = MONSTER;
-						monster_loc.push_back(make_pair(i,j));
-					}
+					
+					/*
 					else if (d100(gen) <= 3) {
 						map.at(i).at(j) = TREASURE;
 					}
-					else if (d100(gen) <= 1) { //3% each spot is water
+					*/
+
+					if (d100(gen) <= 1) { //3% each spot is water
 						map.at(i).at(j) = WATER;
 					}
 					else if (d100(gen) <= 30) { //20% chance of water near other water
@@ -91,14 +95,22 @@ class Game_map{
 							map.at(i).at(j) = WATER;
 
 					}
-					else if (d100(gen)<=3){
+					else if (d100(gen)<=2){
 						map.at(i).at(j)=GRASS;
 						is_grass.at(i).at(j)=true;
+						if (d100(gen) <= 5) {
+							is_monster.at(i).at(j)=true;
+							//monster_loc.push_back(make_pair(i,j));
+						}
 					}
 					else if (d100(gen)<=95){
 						if (map.at(i-1).at(j) == GRASS or map.at(i+1).at(j) == GRASS or map.at(i).at(j-1) == GRASS or map.at(i).at(j+1) == GRASS){
 							map.at(i).at(j)=GRASS;
 							is_grass.at(i).at(j)=true;
+							if (d100(gen) <= 5) {
+								is_monster.at(i).at(j)=true;
+								//monster_loc.push_back(make_pair(i,j));
+					}
 						}
 
 					}
@@ -263,6 +275,9 @@ class Game_map{
 		}
 
 	}
+	bool check_monster(int x, int y){
+		return is_monster.at(y).at(x);
+	}
 	//Replaces the player's old location with and empty space may need to change it to originial is like grass or something check in the future
 	void set_player_loc(int x, int y, char c) {
 		for (unsigned int i =0; i < SIZE;i++){
@@ -287,9 +302,13 @@ class Game_map{
 	//DO COMBAT HERE DUMMY
 	void combat(Hero &hero){
 		system("clear");
+		Enemy monster(hero.get_level());
+		while (true){
 		//USE enemies vector and pop from the back to fight a random enemy
-
-
+			hero.take_damage(monster.get_attack());
+			break;
+		}
+		return;
 
 	}
 	//easier to call init_map no other purpose but to save typing 
