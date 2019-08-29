@@ -1,7 +1,7 @@
 Fireball	10	4	0	3.0	5
 Waterbolt	10	2	0	1.5	2
 FrostBolt	15	4	0	1.25	3
-Heal	0	5	0	2.0	2
+Heal	0	5	5	2.0	2
 Earthspike	10	10	0	5.0	8
 Attack	2	0	0	1.5	1
 Pound	25	0	0	1	8

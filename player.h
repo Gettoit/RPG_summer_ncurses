@@ -23,6 +23,11 @@ class Hero{
 	pair <int,int> location;
 	Inventory loot;
 	public:
+	void add_test_moves(){
+		for (int i = 0; i < 4; i++){
+			move_pool.at(i)=move_list.at(i);
+		}	
+	}
 	void move_list_fill(){
 		move_pool.resize(4);
 		ifstream infile;
@@ -38,9 +43,8 @@ class Hero{
 			infile>>damage>>mana>>healing>>mul>>req;
 			Move temp{name,damage,mana,healing,mul,req};
 			move_list.push_back(temp);
-
-
 		}
+		add_test_moves();
 	}
 	Hero(string new_name, int new_health, int new_mana, int new_attack, int new_speed){
 		name = new_name;
@@ -54,7 +58,7 @@ class Hero{
 
 	}
 	void set_moves(int replace, int move_choice){
-		//move_pool.at(replace-1)=
+		;	
 	
 
 	}
@@ -107,6 +111,19 @@ class Hero{
 	int get_level(){
 		return level;
 	}
+	int damage_calc(int selection){
+		float temp = move_list.at(selection-1).damage;
+		if (temp)
+			temp += level*(move_list.at(selection-1).damage_multiplier);
+		if (move_list.at(selection-1).healing!=0)
+			health+=move_list.at(selection-1).healing + (level*(move_list.at(selection-1).damage_multiplier));
+	
+		/*
+		   if (health>=max_health)
+			health=max_health;
+		*/
+		return temp;
+	}
 	void gain_level(){
 		if ((experience%level) > 20){
 			experience = experience%20;
@@ -141,17 +158,23 @@ class Hero{
 };
 
 class Enemy{
-	int health, attack,speed, level;
+	int health, attack,speed, level, modifier;
 	public:
 	Enemy (int new_level){
 		level = new_level;
 		health= new_level * 30;
-		attack = new_level *10;
+		attack = new_level *4;
 		speed = new_level*5;
+		modifier = rand()% speed;
 	}
-			
+	int deal_damage(){
+		return attack + modifier;
+	}
 	void set_health(int hp){
 		health=hp;
+	}
+	void take_damage(int damage){
+		health-=damage;
 	}
 	int get_health(){
 		return health;

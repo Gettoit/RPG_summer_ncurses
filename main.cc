@@ -1,6 +1,5 @@
 //RPG Made by Derek Lee
 #include "map.h"
-#include <bits/stdc++.h> 
 #include <unistd.h>
 #include <chrono>
 using namespace std::chrono;
@@ -48,7 +47,10 @@ void ncurses_off(){
 void level_up(Hero &hero){
 	hero.gain_level();
 }
-
+void death(){
+	ncurses_off();
+	exit(1);
+}
 void game_start(){
 	vector<vector<vector<Game_map>>> board;
 	int ladder_down_x = 0;
@@ -112,10 +114,15 @@ void game_start(){
 	const int n = test.length();
 	char name[n+1];
 	strcpy(name,test.c_str());
-	for (size_t i = 0; i < test.size(); i ++){
+	for (size_t i = 0; i < test.size(); i++){
 		name[i] = test.at(i);
 	}
 	Hero hero(test,100,10,10,10);
+	/*
+	ncurses_off();
+	cout<<hero.get_move_one().name<<endl;
+	while (true){;}
+	*/
 	int x = 1, y = 1;
 	int level = 0, board_x=0,board_y=0;
 	hero.set_loc(x,y);
@@ -125,6 +132,9 @@ void game_start(){
 		if (ch == 'q' or ch == 'Q'){
 			ncurses_off();
 			exit(1);
+		}
+		if (hero.get_health()<=0){
+			death();
 		}
 		else if (ch==RIGHT){
 			x++;
@@ -137,10 +147,12 @@ void game_start(){
 					//Ncurses is strange and doesnt really work unless you do this
 					ncurses_off();
 					ncurses_on();
+					curs_set(0);
 					//Calls combat function which a spawns a random enemy
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					curs_set(0);
 					//removes the monster spawn location from the map so you cant fight them again
 					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
 					
@@ -198,9 +210,11 @@ void game_start(){
 				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
 					ncurses_off();
 					ncurses_on();
+					curs_set(0);
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					curs_set(0);
 					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
 			}
 			}
@@ -254,9 +268,11 @@ void game_start(){
 				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
 					ncurses_off();
 					ncurses_on();
+					curs_set(0);
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					curs_set(0);
 					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
 				}
 			}
@@ -309,9 +325,11 @@ void game_start(){
 				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
 					ncurses_off();
 					ncurses_on();
+					curs_set(0);
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					curs_set(0);
 					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
 				}
 			}
@@ -373,5 +391,6 @@ void game_start(){
 
 int main(){
 	ncurses_on();
+	curs_set(0);
 	game_start();
 }

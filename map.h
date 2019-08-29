@@ -8,6 +8,7 @@
 //for testing
 #include <iostream>
 using namespace std;
+#include <bits/stdc++.h> 
 
 
 class Game_map{
@@ -304,6 +305,9 @@ class Game_map{
 	bool check_monster(int x, int y){
 		return is_monster.at(y).at(x);
 	}
+	void name_conversion(string test, char hold[]){
+
+	}
 	//Replaces the player's old location with and empty space may need to change it to originial is like grass or something check in the future
 	void set_player_loc(int x, int y, char c) {
 		for (unsigned int i =0; i < SIZE;i++){
@@ -325,6 +329,7 @@ class Game_map{
 	char get_current_loc(int x, int y) {
 		return map.at(y).at(x);
 	}
+
 	//DO COMBAT HERE DUMMY
 	void combat(Hero &hero){
 		const int UP = 65; //Key code for up arrow (also use WASD)
@@ -336,13 +341,28 @@ class Game_map{
 		Enemy monster(hero.get_level());
 		//points is a variable that determies where the pointer for the interface should be 1-4 options for moves may add more options later	
 		int points = 1;
+		bool monster_attacked = false;
 		while (true){
+			if (monster.get_health()<=0){
+				break;
+			}
+			if (monster.get_speed()>hero.get_speed() && monster_attacked == false){
+				hero.take_damage(monster.deal_damage());
+				monster_attacked = true;
+			}
+			if (hero.get_health()<=0){
+				break;
+			}
 			int ch = getch();
 			if (ch==UP){
 				points-=2;
+				if (points < 1)
+					points +=NUM_OPTIONS;
 			}
 			else if (ch==DOWN){
 				points+=2;
+				if (points >NUM_OPTIONS)
+					points-=NUM_OPTIONS;
 			}//handles wrapping around
 			else if (ch==LEFT){
 				points-=1;
@@ -360,21 +380,28 @@ class Game_map{
 			else if (ch == 10 or ch == 13){
 				if (points == 1) {
 					//add moves later to this
-					break;
+					monster.take_damage(hero.damage_calc(1));
+					
 				}
 				else if (points == 2){
-					break;
+					monster.take_damage(hero.damage_calc(2));
 				}
 				else if (points == 3){
-					break;
+					monster.take_damage(hero.damage_calc(3));
 				}
 				else if (points == 4){
-					break;
+					monster.take_damage(hero.damage_calc(4));
 				}
 
+				monster_attacked = false;
 
 						
 			}
+			if (monster.get_speed()<hero.get_speed() && monster_attacked == false){
+				hero.take_damage(monster.deal_damage());
+				monster_attacked = true;
+			}
+
 			//do nothing
 			else if (ch==ERR){;}
 			//draws an arrow to show what the player is selecting 4 different options all do the same thing
@@ -402,10 +429,29 @@ class Game_map{
 				mvprintw(20,28," ");
 				mvprintw(15,43," ");
 			}
-			mvprintw(15,45,"MOVE 2");
-			mvprintw(20,30,"MOVE 3");
-			mvprintw(20,45,"MOVE 4");
-			mvprintw(15,30,"MOVE 1");
+			int n = hero.get_move_one().name.size();
+			char test[n+1];
+			strcpy(test,hero.get_move_one().name.c_str());
+			mvprintw(15,30,test);
+
+			n = hero.get_move_two().name.size();
+			char test2[n+1];
+			strcpy(test2,hero.get_move_two().name.c_str());
+			
+			mvprintw(15,45,test2);
+			n = hero.get_move_three().name.size();
+			char test3[n+1];
+			strcpy(test3,hero.get_move_three().name.c_str());
+			
+			mvprintw(20,30,test3);
+			
+			n = hero.get_move_four().name.size();
+			char test4[n+1];
+			strcpy(test4,hero.get_move_four().name.c_str());
+			
+			mvprintw(20,45,test4);
+
+			mvprintw(0,0,"Enemy Health:                                         ") ;
 			mvprintw(0,0,"Enemy Health: %d", monster.get_health());
 			mvprintw(15,0,"Player Health: %d / %d", hero.get_health(), hero.get_max_health());
 
