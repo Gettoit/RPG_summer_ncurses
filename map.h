@@ -34,12 +34,12 @@ class Game_map{
 	static const char BOSS = 'B';
 	static const char LADDER_UP = '^';
 	static const char LADDER_DOWN = 'v';
-	//static const size_t SIZE = 45;
-	//static const size_t SIZEH = 100;
+	static const size_t SIZE = 45;
+	static const size_t SIZEH = 100;
 	
 	//TEST
-	static const size_t SIZE = 20;
-	static const size_t SIZEH = 20;
+	//static const size_t SIZE = 20;
+	//static const size_t SIZEH = 20;
 
 	static const size_t DISPLAY = 19;
 	
@@ -92,11 +92,11 @@ class Game_map{
 				else {
 					//2% chance of health gain
 					//TODO: change this maybe remove random health ups on the map or limit them to a shop???
-					/*
-					if (d100(gen) <=2){
+					
+					if (d100(gen) <=1){
 						map.at(i).at(j) = HEALTH_UP;
 					}
-					*/
+					
 					//5% change to spawn a monster
 					//TODO: maybe make the monsters hidden and only show up in grass need to determine that when game is closer to being playable
 					//TODO: monsters from visible map and add them to be only spawned in grass may need to move this entirely
@@ -283,7 +283,7 @@ class Game_map{
 		}
 	}
 	//function removes the monster from the map when defeated
-	void remove_monster(int x , int y){
+	/*void remove_monster(int x , int y){
 		pair <int,int> k = make_pair(x,y);
 		for (size_t i=0; i <monster_loc.size();i++){
 			if (monster_loc.at(i).first==y && monster_loc.at(i).second==x){
@@ -294,6 +294,9 @@ class Game_map{
 
 		}
 
+	}*/
+	void remove_monster(int x , int y){
+		is_monster.at(y).at(x)=false;
 	}
 	bool check_monster(int x, int y){
 		return is_monster.at(y).at(x);
@@ -321,13 +324,93 @@ class Game_map{
 	}
 	//DO COMBAT HERE DUMMY
 	void combat(Hero &hero){
+		const int UP = 65; //Key code for up arrow (also use WASD)
+		const int DOWN = 66; //code for down 
+		const int LEFT = 68; //code for left
+		const int RIGHT = 67; //code for right
+		const int NUM_OPTIONS = 4;
 		system("clear");
 		Enemy monster(hero.get_level());
+		//points is a variable that determies where the pointer for the interface should be 1-4 options for moves may add more options later	
+		int points = 1;
 		while (true){
-		//USE enemies vector and pop from the back to fight a random enemy
-			hero.take_damage(monster.get_attack());
-			break;
+			int ch = getch();
+			if (ch==UP){
+				points-=2;
+
+			}
+			else if (ch==DOWN){
+				points+=2;
+			}
+			else if (ch==LEFT){
+				points-=1;
+				if (points<1)
+					points = 2;
+				else if (points == 2)
+					points = 4;
+
+
+			}
+			else if (ch==RIGHT){
+				points+=1;
+				if (points>NUM_OPTIONS){
+					points=3;
+				}
+			}
+			else if (ch == 10 or ch == 13){
+				if (points == 1) {
+					//add moves later to this
+					break;
+				}
+				else if (points == 2){
+					break;
+				}
+				else if (points == 3){
+					break;
+				}
+				else if (points == 4){
+					break;
+				}
+
+
+						
+			}
+			//do nothing
+			else if (ch==ERR){;}
+			if (points == 1){
+				mvprintw(15,28,">");
+				mvprintw(20,43," ");
+				mvprintw(20,28," ");
+				mvprintw(15,43," ");
+			}
+			if (points == 2){
+				mvprintw(20,43," ");
+				mvprintw(15,28," ");
+				mvprintw(20,28," ");
+				mvprintw(15,43,">");
+			}
+			if (points == 3){
+				mvprintw(20,28,">");
+				mvprintw(15,28," ");
+				mvprintw(20,43," ");
+				mvprintw(15,43," ");
+			}
+			if (points == 4){
+				mvprintw(20,43,">");
+				mvprintw(15,28," ");
+				mvprintw(20,28," ");
+				mvprintw(15,43," ");
+			}
+			mvprintw(15,45,"MOVE 2");
+			mvprintw(20,30,"MOVE 3");
+			mvprintw(20,45,"MOVE 4");
+			mvprintw(15,30,"MOVE 1");
+			mvprintw(0,0,"Enemy Health: %d", monster.get_health());
+			mvprintw(15,0,"Player Health: %d / %d", hero.get_health(), hero.get_max_health());
+
+
 		}
+
 		return;
 
 	}

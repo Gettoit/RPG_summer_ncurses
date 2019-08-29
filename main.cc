@@ -28,6 +28,9 @@ void ncurses_on(){
 	init_pair(8,COLOR_BLACK, COLOR_BLACK);
 	init_pair(9,COLOR_GREEN, COLOR_BLACK);
 	init_pair(10,COLOR_WHITE,COLOR_BLACK);
+	init_pair(11,COLOR_WHITE,COLOR_WHITE);
+	init_pair(12,COLOR_BLACK,COLOR_WHITE);
+
 	clear();
 	noecho();
 	cbreak();
@@ -42,7 +45,9 @@ void ncurses_off(){
 	system("clear");
 }
 //TODO: make combat good it will require some stuff to happen
-
+void level_up(Hero &hero){
+	hero.gain_level();
+}
 
 void game_start(){
 	vector<vector<vector<Game_map>>> board;
@@ -127,16 +132,20 @@ void game_start(){
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::WATER) x--;
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::GRASS){
 				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					ncurses_off();
+					ncurses_on();
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
+					
 			}
 			}
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){
 				if (x==0){
 					board_x--;
 					if (board_x<0)
-						board_x=BOARD_SIZE-2;
+						board_x=BOARD_SIZE-1;
 					x=Game_map::SIZEH-2;
 
 				}
@@ -149,7 +158,7 @@ void game_start(){
 				else if (y==0){
 					board_y--;
 					if (board_y<0)
-						board_y=BOARD_SIZE-2;
+						board_y=BOARD_SIZE-1;
 					y=Game_map::SIZE-2;
 				}
 				else if (y==Game_map::SIZE-1){
@@ -180,9 +189,12 @@ void game_start(){
 			//	if (board.check_grass(x,y) == true)
 				//do combat in map.h
 				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					ncurses_off();
+					ncurses_on();
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
 			}
 			}
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_DOWN){
@@ -196,7 +208,7 @@ void game_start(){
 				if (x==0){
 					board_x--;
 					if (board_x<0)
-						board_x=BOARD_SIZE-2;
+						board_x=BOARD_SIZE-1;
 					x=Game_map::SIZEH-2;
 				}
 				if (x==Game_map::SIZEH-1){
@@ -208,7 +220,7 @@ void game_start(){
 				if (y==0){
 					board_y--;
 					if (board_y<0)
-						board_y=BOARD_SIZE-2;
+						board_y=BOARD_SIZE-1;
 					y=Game_map::SIZE-2;
 				}
 				if (y==Game_map::SIZE-1){
@@ -233,9 +245,12 @@ void game_start(){
 				//do combat in map.h
 //					combat(hero);
 				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					ncurses_off();
+					ncurses_on();
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
 				}
 			}
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_DOWN){
@@ -248,7 +263,7 @@ void game_start(){
 				if (x==0){
 					board_x--;
 					if (board_x<0)
-						board_x=BOARD_SIZE-2;
+						board_x=BOARD_SIZE-1;
 					x=Game_map::SIZEH-2;
 				}
 				if (x==Game_map::SIZEH-1){
@@ -260,7 +275,7 @@ void game_start(){
 				if (y==0){
 					board_y--;
 					if (board_y<0)
-						board_y=BOARD_SIZE-2;
+						board_y=BOARD_SIZE-1;
 					y=Game_map::SIZE-2;
 				}
 				if (y==Game_map::SIZE-1){
@@ -285,9 +300,12 @@ void game_start(){
 				//do combat in map.h
 //					combat(hero);
 				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					ncurses_off();
+					ncurses_on();
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
 				}
 			}
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::LADDER_DOWN){
@@ -301,7 +319,7 @@ void game_start(){
 				if (x==0){
 					board_x--;
 					if (board_x<0)
-						board_x=BOARD_SIZE-2;
+						board_x=BOARD_SIZE-1;
 					x=Game_map::SIZEH-2;
 				}
 				if (x==Game_map::SIZEH-1){
@@ -313,7 +331,7 @@ void game_start(){
 				if (y==0){
 					board_y--;
 					if (board_y<0)
-						board_y=BOARD_SIZE-2;
+						board_y=BOARD_SIZE-1;
 					y=Game_map::SIZE-2;
 				}
 				if (y==Game_map::SIZE-1){
@@ -332,13 +350,13 @@ void game_start(){
 		
 		mvprintw(Game_map::SIZE,0,"Character name: ");
 		mvprintw(Game_map::SIZE,16,name);
-		mvprintw(Game_map::SIZE +1, 0, "Player level: ");
-		mvprintw(Game_map::SIZE +1, 14,"%d",hero.get_level());
-		mvprintw(Game_map::SIZE +2,0, "Current Health: ");
-		mvprintw(Game_map::SIZE +2,16, "%d", hero.get_health());
-		mvprintw(Game_map::SIZE +2,20, "/ ");
-		mvprintw(Game_map::SIZE +2,22, "%d",hero.get_max_health());
-
+		mvprintw(Game_map::SIZE +1, 0, "Player level: %d",hero.get_level());
+		mvprintw(Game_map::SIZE +2,0, "Current Health: %d / %d",hero.get_health(),hero.get_max_health());
+		
+		mvprintw(0, Game_map::SIZEH +1,"                                                         " );
+		mvprintw(0, Game_map::SIZEH +1,"X: %d", board_x+1);
+		mvprintw(0, Game_map::SIZEH +8,"Y: %d", board_y+1);
+		
 		board.at(level).at(board_y).at(board_x).set_player_loc(x,y,c);
 		board.at(level).at(board_y).at(board_x).draw(x,y);
 	}
