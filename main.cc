@@ -131,16 +131,23 @@ void game_start(){
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::WALL) x--;
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::WATER) x--;
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::GRASS){
+				//This is the bread and butter of the game need
+				//Grass is where enemies live and we need to elimiate them
 				if (board.at(level).at(board_y).at(board_x).check_monster(x,y)){
+					//Ncurses is strange and doesnt really work unless you do this
 					ncurses_off();
 					ncurses_on();
+					//Calls combat function which a spawns a random enemy
 					board.at(level).at(board_y).at(board_x).combat(hero);
 					ncurses_off();
 					ncurses_on();
+					//removes the monster spawn location from the map so you cant fight them again
 					board.at(level).at(board_y).at(board_x).remove_monster(x,y);;
 					
+				}
 			}
-			}
+
+			//These statments allow the floor to wrap around
 			if (board.at(level).at(board_y).at(board_x).get_current_loc(x,y) == Game_map::EXIT){
 				if (x==0){
 					board_x--;
@@ -347,16 +354,16 @@ void game_start(){
 			hero.set_loc(x,y);
 
 		}
-		
+		//HUD for the player
 		mvprintw(Game_map::SIZE,0,"Character name: ");
 		mvprintw(Game_map::SIZE,16,name);
 		mvprintw(Game_map::SIZE +1, 0, "Player level: %d",hero.get_level());
 		mvprintw(Game_map::SIZE +2,0, "Current Health: %d / %d",hero.get_health(),hero.get_max_health());
-		
+		// shows the coordinates for the player to not get lost in the rooms
 		mvprintw(0, Game_map::SIZEH +1,"                                                         " );
 		mvprintw(0, Game_map::SIZEH +1,"X: %d", board_x+1);
 		mvprintw(0, Game_map::SIZEH +8,"Y: %d", board_y+1);
-		
+		//updates the players location and then draws the map with draw()
 		board.at(level).at(board_y).at(board_x).set_player_loc(x,y,c);
 		board.at(level).at(board_y).at(board_x).draw(x,y);
 	}

@@ -191,6 +191,8 @@ class Game_map{
 					color = 9;
 				else if (map.at(i).at(j) == EXIT)
 					color = 1;
+				else if (map.at(i).at(j) == LADDER_DOWN) color = 5;
+				else if (map.at(i).at(j) == LADDER_UP) color = 5;
 				attron(COLOR_PAIR(color));
 				mvaddch(i-start_y,j-start_x,map.at(i).at(j));
 				attroff(COLOR_PAIR(color));
@@ -295,6 +297,7 @@ class Game_map{
 		}
 
 	}*/
+	//function removes the monster from the map when defeated
 	void remove_monster(int x , int y){
 		is_monster.at(y).at(x)=false;
 	}
@@ -337,26 +340,23 @@ class Game_map{
 			int ch = getch();
 			if (ch==UP){
 				points-=2;
-
 			}
 			else if (ch==DOWN){
 				points+=2;
-			}
+			}//handles wrapping around
 			else if (ch==LEFT){
 				points-=1;
 				if (points<1)
 					points = 2;
 				else if (points == 2)
 					points = 4;
-
-
-			}
+			}//handles wrapping around
 			else if (ch==RIGHT){
 				points+=1;
 				if (points>NUM_OPTIONS){
 					points=3;
 				}
-			}
+			}//selecting the move add moves later when
 			else if (ch == 10 or ch == 13){
 				if (points == 1) {
 					//add moves later to this
@@ -377,25 +377,26 @@ class Game_map{
 			}
 			//do nothing
 			else if (ch==ERR){;}
+			//draws an arrow to show what the player is selecting 4 different options all do the same thing
 			if (points == 1){
 				mvprintw(15,28,">");
 				mvprintw(20,43," ");
 				mvprintw(20,28," ");
 				mvprintw(15,43," ");
 			}
-			if (points == 2){
+			else if (points == 2){
 				mvprintw(20,43," ");
 				mvprintw(15,28," ");
 				mvprintw(20,28," ");
 				mvprintw(15,43,">");
 			}
-			if (points == 3){
+			else if (points == 3){
 				mvprintw(20,28,">");
 				mvprintw(15,28," ");
 				mvprintw(20,43," ");
 				mvprintw(15,43," ");
 			}
-			if (points == 4){
+			else if (points == 4){
 				mvprintw(20,43,">");
 				mvprintw(15,28," ");
 				mvprintw(20,28," ");
