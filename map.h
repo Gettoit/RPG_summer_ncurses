@@ -17,7 +17,12 @@ class Game_map{
 	vector<vector<bool>> is_grass;
 	vector<vector<bool>> is_monster;
 	vector<vector<bool>> is_exit;
+	vector<vector<bool>> is_ld;
+	vector<vector<bool>> is_lu;
 	vector <Enemy> enemies;
+	vector<pair<int,int>> ladder_up;
+	vector<pair<int,int>> ladder_down;
+	
 	
 	//No longer use exit to leave the floor
 	//bool exit=false;
@@ -39,8 +44,8 @@ class Game_map{
 	static const size_t SIZEH = 100;
 	
 	//TEST
-	//static const size_t SIZE = 20;
-	//static const size_t SIZEH = 20;
+	//static const size_t SIZE = 5;
+	//static const size_t SIZEH = 5;
 
 	static const size_t DISPLAY = 19;
 	
@@ -53,10 +58,14 @@ class Game_map{
 		map.clear();
 		map.resize(SIZE); 
 		is_grass.resize(SIZE);
+		is_ld.resize(SIZE);
+		is_lu.resize(SIZE);
 		is_exit.resize(SIZE);
 		is_monster.resize(SIZE);
 		for (auto &v : map) v.resize(SIZEH,' '); 
 		for (auto &v : is_grass) v.resize(SIZEH,false);
+		for (auto &v : is_ld) v.resize(SIZEH,false);
+		for (auto &v : is_lu) v.resize(SIZEH,false);
 		for (auto &v : is_exit) v.resize(SIZEH,false);
 		for (auto &v : is_monster) v.resize(SIZEH,false);
 		for (size_t i = 0; i < SIZE; i++) {
@@ -169,6 +178,10 @@ class Game_map{
 		//Now draw the map using NCURSES
 		for (int i = start_y; i <= end_y; i++) {
 			for (int j = start_x; j <= end_x; j++) {
+					if(is_ld.at(i).at(j) == true)
+						map.at(i).at(j) = LADDER_DOWN;
+					if(is_lu.at(i).at(j) == true)
+						map.at(i).at(j) = LADDER_UP;
 				//if (i == cursor_x && j == cursor_y)
 				//  attron(A_UNDERLINE | A_BOLD);
 				int color = 10;
@@ -308,6 +321,7 @@ class Game_map{
 	void name_conversion(string test, char hold[]){
 
 	}
+	
 	//Replaces the player's old location with and empty space may need to change it to originial is like grass or something check in the future
 	void set_player_loc(int x, int y, char c) {
 		for (unsigned int i =0; i < SIZE;i++){
@@ -317,11 +331,12 @@ class Game_map{
 						map.at(i).at(j) = EXIT;
 					if(is_grass.at(i).at(j) == true)
 						map.at(i).at(j) = GRASS;
+				
 					else
 						map.at(i).at(j)=' ';
 				}
 			}
-		}
+	}
 
 		map.at(y).at(x) = c;
 	}
@@ -341,14 +356,10 @@ class Game_map{
 		Enemy monster(hero.get_level());
 		//points is a variable that determies where the pointer for the interface should be 1-4 options for moves may add more options later	
 		int points = 1;
-		bool monster_attacked = false;
+		bool monster_attacked = true;
 		while (true){
 			if (monster.get_health()<=0){
 				break;
-			}
-			if (monster.get_speed()>hero.get_speed() && monster_attacked == false){
-				hero.take_damage(monster.deal_damage());
-				monster_attacked = true;
 			}
 			if (hero.get_health()<=0){
 				break;
@@ -397,7 +408,7 @@ class Game_map{
 
 						
 			}
-			if (monster.get_speed()<hero.get_speed() && monster_attacked == false){
+			if (monster_attacked == false){
 				hero.take_damage(monster.deal_damage());
 				monster_attacked = true;
 			}
@@ -462,9 +473,11 @@ class Game_map{
 
 	}
 	void spawn_ladder_down(int x, int y){
+		is_ld.at(y).at(x) = true;
 		map.at(y).at(x)=LADDER_DOWN;
 	}
 	void spawn_ladder_up(int x, int y){
+		is_lu.at(y).at(x) = true;
 		map.at(y).at(x)=LADDER_UP;
 	}
 	void spawn_boss(){

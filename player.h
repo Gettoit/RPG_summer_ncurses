@@ -118,10 +118,8 @@ class Hero{
 		if (move_list.at(selection-1).healing!=0)
 			health+=move_list.at(selection-1).healing + (level*(move_list.at(selection-1).damage_multiplier));
 	
-		/*
-		   if (health>=max_health)
+		if (health>=max_health)
 			health=max_health;
-		*/
 		return temp;
 	}
 	void gain_level(){
